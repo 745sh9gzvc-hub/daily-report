@@ -1,0 +1,26 @@
+name: 每日早间要闻推送
+
+on:
+  schedule:
+    # 北京时间 07:30 = UTC 23:30（前一天）
+    - cron: "30 23 * * *"
+  workflow_dispatch:  # 允许手动触发测试
+
+jobs:
+  news:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安装依赖
+        run: pip install akshare requests feedparser
+
+      - name: 运行要闻脚本
+        env:
+          PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+        run: python news.py
